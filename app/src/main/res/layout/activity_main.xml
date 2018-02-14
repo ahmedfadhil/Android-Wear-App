@@ -4,24 +4,45 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/dark_grey"
     android:padding="@dimen/box_inset_layout_padding"
     tools:context="com.example.android.androidwearapp.MainActivity"
     tools:deviceIds="wear">
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/inner_frame_layout_padding"
-        app:boxedEdges="all">
+        android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/text"
+            android:id="@+id/mTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/hello_world" />
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="0"
+            android:textSize="50sp" />
 
-    </FrameLayout>
+        <Button
+            android:id="@+id/reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="34dp"
+            android:onClick="reset"
+            android:text="Reset" />
+
+        <Button
+            android:id="@+id/plusOne"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/reset"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="72dp"
+            android:onClick="plusOne"
+            android:text="+1" />
+    </RelativeLayout>
+
 </android.support.wear.widget.BoxInsetLayout>
 
