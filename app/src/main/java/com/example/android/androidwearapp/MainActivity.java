@@ -1,44 +1,114 @@
 package com.example.android.androidwearapp;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.wearable.activity.WearableActivity;
-import android.support.wearable.view.CardFragment;
+import android.support.wearable.view.WatchViewStub;
+import android.support.wearable.view.WearableListView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class MainActivity extends WearableActivity {
-    private TextView mTextView;
-//    int counter = 0;
-//
-//    public void plusOne(View view) {
-//        counter++;
-//        mTextView.setText(Integer.toString(counter));
-//    }
-//
-//    public void reset(View view) {
-//        counter = 0;
-//        mTextView.setText(Integer.toString(counter));
-//    }
+public class MainActivity extends Activity implements WearableListView.ClickListener {
+
+    @Override
+    public void onClick(WearableListView.ViewHolder viewHolder) {
+
+        Integer tag = (Integer) viewHolder.itemView.getTag();
+        Log.i("AppInfo", "Item Tapped: " + Integer.toString(tag));
+
+
+    }
+
+    @Override
+    public void onTopEmptyRegionClick() {
+
+    }
+
+
+    private static final class MyAdapter extends WearableListView.Adapter {
+
+        private String[] mDataset;
+        private final Context mContext;
+        private final LayoutInflater mInflater;
+
+        // Provide a suitable constructor (depends on the kind of dataset)
+        public MyAdapter(Context context, String[] dataset) {
+            mContext = context;
+            mInflater = LayoutInflater.from(context);
+            mDataset = dataset;
+        }
+
+        // Provide a reference to the type of views you're using
+        public static class ItemViewHolder extends WearableListView.ViewHolder {
+            private TextView textView;
+            public ItemViewHolder(View itemView) {
+                super(itemView);
+                // find the text view within the custom item's layout
+                textView = (TextView) itemView.findViewById(R.id.name);
+            }
+        }
+
+        // Create new views for list items
+        // (invoked by the WearableListView's layout manager)
+        @Override
+        public WearableListView.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                              int viewType) {
+            // Inflate our custom layout for list items
+            return new ItemViewHolder(mInflater.inflate(R.layout.list_item, null));
+        }
+
+        // Replace the contents of a list item
+        // Instead of creating new views, the list tries to recycle existing ones
+        // (invoked by the WearableListView's layout manager)
+        @Override
+        public void onBindViewHolder(WearableListView.ViewHolder holder,
+                                     int position) {
+            // retrieve the text view
+            ItemViewHolder itemHolder = (ItemViewHolder) holder;
+            TextView view = itemHolder.textView;
+            // replace text contents
+            view.setText(mDataset[position]);
+            // replace list item's metadata
+            holder.itemView.setTag(position);
+        }
+
+        // Return the size of your dataset
+        // (invoked by the WearableListView's layout manager)
+        @Override
+        public int getItemCount() {
+            return mDataset.length;
+        }
+    }
+
+    String[] elements = { "Rob", "Kirsten", "Tommy", "Ralphie" };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        mTextView = (TextView) findViewById(R.id.mTextView);
-
-        // Enables Always-on
-        setAmbientEnabled();
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        CardFragment cardFragment = CardFragment.create("Hello Rob", "How are you doing?", android.R.drawable.btn_dialog);
 
 
-        fragmentTransaction.add(R.id.frame_layout, cardFragment);
-        fragmentTransaction.commit();
+        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
 
-    };
+        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
+            @Override
+            public void onLayoutInflated(WatchViewStub stub) {
 
 
+                WearableListView listView = (WearableListView) findViewById(R.id.wearable_list);
+
+                // Assign an adapter to the list
+                listView.setAdapter(new MyAdapter(MainActivity.this, elements));
+
+                // Set a click listener
+                listView.setClickListener(MainActivity.this);
+
+
+            }
+        });
+    }
 }
